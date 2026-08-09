@@ -1,0 +1,8 @@
+*.d
+*.o
+*.crf
+*.vscode/
+*.build
+MDK-ARM/f4_learning/
+*.uvguix.*
+MDK-ARM/RTE/
