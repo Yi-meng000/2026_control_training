@@ -2,12 +2,14 @@
  * @Author: Frt001 2067314783@qq.com
  * @Date: 2026-08-07 19:49:18
  * @LastEditors: Frt001 2067314783@qq.com
- * @LastEditTime: 2026-08-09 21:41:39
+ * @LastEditTime: 2026-08-10 18:55:21
  * @FilePath: \f4\f4_cubemx配置.md
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
 
 # STM32F405RGT6
+
+可以多了解些硬件底层内容
 
 ## 一、时钟配置
 SYS 时钟源用TIM1  
@@ -272,3 +274,134 @@ dma在串口接收的应用，数据搬运不过cpu，给cpu减负，同时可�
 ```
 
 ## 五、CAN
+
+### CAN通信
+有关can通信的硬件介绍参考https://blog.csdn.net/XiaoXiaoPengBo/article/details/116206252
+#### 物理层
+差分异步通信，两根线，CAN_H和CAN_L  
+![alt text](image-6.png)
+总线结构（一个总线上可以有多个节点交互）不是点对点，闭环网络，总线两端各有一个120欧姆的终端电阻（类似吸音棉，信号走到总线末端时会被电阻吸收，不会产生回波干扰总线信号），120欧正好和双绞线阻抗匹配，保证总线信号完整性，防止信号反射。电阻本身可以帮助电容放电，可以加速电平复位。  
+![alt text](image-7.png)  
+#### 协议层  
+异步通信，两根线没有时钟线同步，需要约定好波特率（1Mbps，闭环总线能跑到的最高波特率）  
+两根线没压差（都是2.5V）代表逻辑 1（实际消息代表1），两根线有压差（CAN_H拉高，CAN_L拉低）代表逻辑 0（实际消息也代表0），和UART串口通信正好相反，CAN总线具有“线与”特性，多个节点同时发数据时，显性电平占优，最终总线状态是有压差的，意味着发出去的这一位是0。  
+不同于UART点对点的简单封装，CAN总线通信包含一个复杂的协议，CAN总线上发的每一帧消息称为报文，CAN一共规定了五种类型帧（数据、遥控、过载、错误、帧间隔），每一条报文都满足一个特定的结构，常用数据帧，包含的信息最多，结构最复杂，简单来看包含：起始位，id，数据长度，数据，校验，结束位等，id是CAN总线的核心，id越小优先级越高，id相同的报文会产生冲突。  
+冲突问题：两根差分线异步通信还是总线结构，UART是用一根线去发送数据，两根线互不影响，通信双方自己发自己的，自己收自己的不会冲突，但是can总线就两根线，挂载了多个节点（通信方），每个节点都可以发数据，而且每一条报文都会占用两根差分线，就会存在一个问题，多条报文同时发送到总线上时，就面临着冲突。CAN总线解决这个冲突利用的就是“线与”特性，每个节点在发送消息的时候同时会监听总线上的消息，因为总线上如果同时即有人发0，又有人发1，总线最终呈现为0，发送1的节点会发现总线上的和自己发送的不一样，就会停止发送，进入接收状态，等待这条报文发送完成后再重新发送，0001 > 0010(id越小优先级越高)标准帧>扩展帧，错误帧：当仲裁段过了后发现总线上的消息和自己发送的不一样，就会发送错误帧，告诉总线上的其他节点，这条报文有问题，其他节点收到错误帧后会丢弃这条报文，等待下一条报文。  
+数据段只有八个字节，这一点不像UART一样想发多长的消息发多大，如果消息超过八个字节，就需要拆分成多条报文发送，接收端收到多条报文后再拼接成完整的消息，但是8个字节能存的东西也还是不少的。  
+![alt text](image-8.png)  
+
+#### stm32的can控制器自己了解
+
+#### cubemx配置
+
+分频系数：3 APB1有42MHz，42/3=14MHz  
+tq（时间片）=1/14MHz=71.4ns，是CAN底层的最小不可再分时间，
+BS1 = 9 BS2 = 4 SYNC_SEG（在两段前）占1个tq，bit time(实际一个bit发送所用时间) = (1+9+4)*tq = 14*tq = 1us，bit rate = 1/bit time = 1Mbps，每个bit在发送的时候会被拆分成14个时间片，其中stm32会在BS1和BS2的交界处(一般为整个周期的70%-80%)读电平，这时读的电平是最准的，前面读的电平可能还没稳定，后面读的电平可能已经被下一个bit影响了。  
+SJW：如果两个节点的时钟不是同步的话，把某个bit拉长或缩短一点点，保证两个节点的时钟同步，避免通信出错，这一点点的大小就是SJW，一般给1个tq就够了。
+
+TTCM：时间触发通信模式，开启后每条CAN报文会加上一个时间戳，一般航空航天这种级别才需要这种同步，平时不用开。  
+ABOM：自动离线管理，要开，CAN芯片内部的计数器会记录错误次数，错误次数超过一定值后会自动进入离线状态，离线状态下不会再发送报文，避免总线被占用，影响其他节点通信，总线干扰比较大的情况开启后可以及时自动连接。  
+AWUM：为汽车设计的，单片机有休眠模式，开启后总线来消息后会自动唤醒单片机，我们的单片机会始终满载运行，开不开没区别。  
+ART：自动重传，要开，跟前面提到的冲突问题有关系，当仲裁失败或者是发送错误帧后，CAN控制器会自动重发这条报文，避免丢包。  
+RFLM：stm32的每个FIFO有三个信箱，当三个信箱满了后来了第四帧消息，默认处理是丢弃掉最旧那条消息，开启后如果消息没被搬出去就也不会收新消息，我们不开，因为我们要保证每时每刻我读到的电机消息都是最新状态。  
+TXFP：发送优先级，发送FIFO里三个信箱塞了三条消息时，默认是按id比较优先级，开启后会按照时间顺序，谁先塞进来的谁先发送，不用开，CAN总线的仲裁机制已经很优秀了  
+
+MODE：正常模式，收发都可以，回环模式，收发都可以，但是发送的消息会被自己收到，方便调试，静默模式，只能接收不能发送，方便调试，静默回环模式，回环模式下同时保持静默，一般用于及其恶劣或未知的外部硬件环境进行调试，确保不存在干扰。  
+开NVIC，
+
+#### HAL库函数
+
+FIFO(First In First Out)先进先出，消息队列，每个CAN控制器有两个独立的FIFO，FIFO0和FIFO1，相当于有两个队可以排队，FIFO0和FIFO1各有三个信箱，每个队最多排三个消息。  
+
+筛选器（过滤器）:CAN总线上多个节点都可以向总线上发送消息，但是对于一个节点来说，不一定需要收线上的所有消息，可能只会针对性的收某几个节点的消息，CAN控制器内部有一个硬件筛选器（过滤器），可以根据id来筛选消息，只有符合条件的消息才会被搬到FIFO里，其他的消息会被丢弃掉。
+F4一共提供了28个过滤器，但是CAN1比CAN2在硬件设计上要地位高一些，28个过滤器和FIFO收发的专用SRAM都是CAN1独占的，CAN2能用到多少资源取决于配置过滤器时CAN1分给他多少，还有一个问题就是如果不配CAN1，直接配置CAN2是用不了的，CAN1的时钟线不开，CAN2也用不了  
+每个筛选器组有两个32位宽的寄存器（FR1 FR2）（存放过滤规则），当使用16位位宽的时候，把两个寄存器都从中间一分为二，每个寄存器的高位和低位各自就变成了一个16位宽的寄存器，当使用32位位宽时，FilterIdLow和FilterIdHigh拼起来是整个FR1的32位，FilterMaskIdLow和FilterMaskIdHigh拼起来是整个FR2的32位。什么情况用32：扩展帧，扩展帧一帧id29位加上后面的RTR和IDE位，16位宽根本放不下，只能用32位宽。但如果是标准帧：用16更好，标准帧id11位加上后面的RTR和IDE位，16位宽足够了，而且如果用16位位宽相当于有四个寄存器可以用，可编辑的过滤器更多，灵活性也更高。  
+列表/掩码（不同的过滤方式）：  
+32位列表模式：两个独立的寄存器，每个寄存器存一个id，id匹配就收，id不匹配就丢弃。写代码的时候要做一个位运算，分别存储高16位和低16位。
+32位掩码模式：FR1存基准id，FR2存掩码id，掩码id的每一位是0或1，0表示不管这一位是0还是1都收，1表示这一位必须和基准id一样才收。写代码的时候同样要做一个位运算，分别存储高16位和低16位。很适用于收一类id的消息。
+16位列表模式：四个独立的寄存器，每个寄存器存一个id，id匹配就收，id不匹配就丢弃。  
+16位掩码模式：（可以配两类id）FilterIdLow存基准id1，FilterMaskIdLow存掩码 1，这两个作位运算作为一类id的过滤器，FilterIdHigh存基准id2，FilterMaskIdHigh存掩码 2，这两个作位运算作为另一类id的过滤器。在过滤的时候，只要满足其中一条就可以收。  
+
+stm32底层架构是小端序，低位是低0位。对于标准帧id：实际的id只占11位，16位寄存器里[15-5]位是给id存放留的位置，所以在往寄存器里存的时候要<<5，左移5位，实际写的时候(0x201 << 5)；对于扩展帧，实际的id只占29位，32位寄存器里[31-3]位是给id存放留的位置，所以在往寄存器里存的时候要<<3，左移3位，除此之外第[2]位是IDE位，用来标明这个id是标准帧id还是扩展帧id，直接左移后这一位是0，必须要把它置一，实际写的时候先拼出来这个32位((0x01010203 << 3) | 4)，在分别取低16位((0x01010203 << 3) | 4) & 0xFFFF和高16位((0x01010203 << 3) | 4)>>16，。  
+标准帧的范围：0x000-0x7FF，扩展帧的范围：0x00000000-0x1FFFFFFF。
+
+
+![alt text](image-9.png)
+
+配过滤器  
+``` C
+//定义过滤器
+    CAN_FilterTypeDef CAN_FilterConfig;
+//一个过滤器
+    CAN_FilterConfig.FilterActivation = ENABLE;                     // 激活过滤器
+    CAN_FilterConfig.SlaveStartFilterBank = 14;                     // CAN1 CAN2的过滤器分割线，0-13给CAN1，14-27给CAN2
+    CAN_FilterConfig.FilterBank = 0;                                // 使用第0个筛选器组
+    CAN_FilterConfig.FilterScale = CAN_FILTERSCALE_16BIT;           // 位宽
+    CAN_FilterConfig.FilterMode = CAN_FILTERMODE_IDLIST;            // 模式（列表/掩码）
+    CAN_FilterConfig.FilterFIFOAssignment = CAN_FILTER_FIFO0;       // 用哪个FIFO的信箱
+    CAN_FilterConfig.FilterIdHigh = (0x201 << 5);                   // 基准高位
+    CAN_FilterConfig.FilterMaskIdHigh = (0x202 << 5);               // 掩码高位
+    CAN_FilterConfig.FilterIdLow = (0x203 << 5);                    // 基准低位
+    CAN_FilterConfig.FilterMaskIdLow = (0x204 << 5);                // 掩码低位
+    if (HAL_CAN_ConfigFilter(&hcan1, &CAN_FilterConfig) != HAL_OK) { // 应用硬件中
+        Error_Handler();
+    }
+//CAN启动以及启动两个FIFO的挂起中断
+
+    if (HAL_CAN_Start(&hcan1) != HAL_OK)
+        Error_Handler();
+    if (HAL_CAN_ActivateNotification(&hcan1, CAN_IT_RX_FIFO0_MSG_PENDING) != HAL_OK) {
+        Error_Handler();
+    }
+    if (HAL_CAN_ActivateNotification(&hcan1, CAN_IT_RX_FIFO1_MSG_PENDING) != HAL_OK) {
+        Error_Handler();
+    }
+```
+同样用中断来接收消息，每收到一条消息就触发一次中断，进中断回调函数处理信息，HAL库回调函数只区分FIFO0和FIFO1，不区分CAN1和CAN2，所以在回调函数里要判断是哪个CAN控制器触发的中断，不管是CAN1的FIFO0还是CAN2的FIFO0只要有消息就进FIFO0的回调函数。 
+
+``` C
+CAN_RxHeaderTypeDef RxHeader;
+uint8_t RxData[8];
+
+void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
+{
+    // 确保是 CAN1 触发的中断
+    if (hcan->Instance == CAN1) 
+    {
+        // 从 FIFO 0 把数据捞出来，存到 RxData 数组里
+        if (HAL_CAN_GetRxMessage(hcan, CAN_RX_FIFO0, &RxHeader, RxData) == HAL_OK)
+        {
+            if (RxHeader.StdId == 0x201) {
+                
+            }
+            else if (RxHeader.StdId == 0x202) {
+                // 这是 2 号电机发来的反馈...
+            }
+        }
+    } else if (hcan->Instance == CAN2) 
+    {
+        
+        if (HAL_CAN_GetRxMessage(hcan, CAN_RX_FIFO0, &RxHeader, RxData) == HAL_OK)
+        {
+            // 处理 CAN2 的消息...
+        }
+    }
+}
+```
+
+发消息
+``` C
+    CAN_TxHeaderTypeDef TxHeader;
+    uint32_t TxMailbox; // 用于记录这次发送用掉了哪个邮箱
+    uint8_t TxData[8] = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08}; // 要发送的数据
+
+    TxHeader.StdId = 0x102;                 // 填入 11位 标准ID
+    TxHeader.ExtId = 0;                     // 扩展ID
+    TxHeader.IDE = CAN_ID_STD;//CAN_ID_EXT) // 标准帧
+    TxHeader.RTR = CAN_RTR_DATA;            // 数据帧 
+    TxHeader.DLC = 8;                  // 数据长度 (0~8)
+    TxHeader.TransmitGlobalTime = DISABLE;  // 禁用时间戳
+
+    HAL_CAN_AddTxMessage(&hcan1, &TxHeader, TxData, &TxMailbox);
+```
+

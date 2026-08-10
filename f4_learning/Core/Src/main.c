@@ -18,6 +18,7 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "can.h"
 #include "dma.h"
 #include "tim.h"
 #include "usart.h"
@@ -94,6 +95,7 @@ int main(void)
   MX_TIM2_Init();
   MX_TIM3_Init();
   MX_USART1_UART_Init();
+  MX_CAN1_Init();
   /* USER CODE BEGIN 2 */
   Beep_Init();
   UART_Start_Receive();
@@ -108,6 +110,19 @@ int main(void)
       {
         Beep_Alarm(Beep_Trigger);
         Beep_Trigger = 0;
+
+        CAN_TxHeaderTypeDef TxHeader;
+        uint32_t TxMailbox; // 用于记录这次发送用掉了哪个邮箱
+        uint8_t TxData[8] = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08}; // 要发送的数据
+
+        TxHeader.StdId = 0;                 // 标准ID
+        TxHeader.ExtId = 0x01020304;                     // 扩展ID
+        TxHeader.IDE = CAN_ID_EXT;              // 标准帧/扩展帧
+        TxHeader.RTR = CAN_RTR_DATA;            // 数据帧
+        TxHeader.DLC = 8;                  // 数据长度 (0~8)
+        TxHeader.TransmitGlobalTime = DISABLE;  // 禁用时间戳
+
+        HAL_CAN_AddTxMessage(&hcan1, &TxHeader, TxData, &TxMailbox);
       }
       
     /* USER CODE END WHILE */
