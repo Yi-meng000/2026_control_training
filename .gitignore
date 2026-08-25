@@ -1,0 +1,11 @@
+*.d
+*.o
+*.crf
+*.vscode/
+*.build
+MDK-ARM/f4_show/
+MDK-ARM/27RC_Proj_Template/
+MDK-ARM/RTE/
+MDK-ARM/DebugConfig/
+*.uvguix.*
+MDK-ARM/RTE/
