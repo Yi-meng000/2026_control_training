@@ -74,7 +74,7 @@ void DJmotor_Init(void)
     limit.RPMLimitFlag = false;
     limit.SpeedRPMLimit = 400;
     limit.ZeroCurrentLimit_raw = 3000;
-    limit.ZeroRPMLimit = 250;
+    limit.ZeroRPMLimit = 50;
 
     statusFlag.IsSetZero = true;
     statusFlag.Overtimeflag = false;

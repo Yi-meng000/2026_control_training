@@ -107,6 +107,7 @@ int main(void)
   MX_CAN2_Init();
   /* USER CODE BEGIN 2 */
   Beep_Init();
+  CAN_InitSendQueue();
   UART_Start_Recieve();
   solenoid_init(3);
   #if USE_DJ

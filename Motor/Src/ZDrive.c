@@ -86,9 +86,10 @@ static void ZdriveEnqueue(uint32_t id, uint8_t dlc, const uint8_t *data)
    命名与 ZdriveEnqueue / ZdriveReceive 对齐,发送节奏归驱动所有。 */
 void ZdriveDequeue(uint8_t bus)
 {
+    CAN_SendQueueType *queue = (bus == 0U) ? &CAN1_Txqueue : &CAN2_Txqueue;
     for (uint8_t i = 0; i < MOTOR_ZDRIVE_BUS_RETRANS_CNT; i++)
     {
-        CAN_DequeueTx(Zdrive_GetTxQueue(bus));
+        CAN_DequeueTx(queue);
     }
 }
 
