@@ -341,7 +341,7 @@
               <MiscControls></MiscControls>
               <Define>USE_HAL_DRIVER,STM32F405xx</Define>
               <Undefine></Undefine>
-              <IncludePath>../Core/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32F4xx/Include;../Drivers/CMSIS/Include;../HDL/Inc;../IRQ/Inc;../Middlewares/Third_Party/FreeRTOS/Source/include;../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2;../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F;../APL/Inc;../FML/Inc;../Motor/Inc</IncludePath>
+              <IncludePath>../Core/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32F4xx/Include;../Drivers/CMSIS/Include;../HDL/Inc;../IRQ/Inc;../Middlewares/Third_Party/FreeRTOS/Source/include;../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2;../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F;../FML/Inc;../Motor/Inc;..\APL\Tasks\Inc</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -1579,16 +1579,6 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>APL</GroupName>
-          <Files>
-            <File>
-              <FileName>myostasks.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\APL\Src\myostasks.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
           <GroupName>FML</GroupName>
           <Files>
             <File>
@@ -1635,6 +1625,16 @@
               <FileName>ZDrive.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Motor\Src\ZDrive.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>APL/Tasks</GroupName>
+          <Files>
+            <File>
+              <FileName>myostasks.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\APL\Tasks\Src\myostasks.c</FilePath>
             </File>
           </Files>
         </Group>
