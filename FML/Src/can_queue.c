@@ -5,7 +5,7 @@
  * 纯发送队列:ZdriveEnqueue / VESC 入队,TIM2 中断 CAN_DequeueTx 出队。
  * 接收不再经过软件队列,反馈帧在 CAN 接收中断里直接解析。
  */
-#include "CanQueue.h"
+#include "can_queue.h"
 #include <string.h>
 
 CAN_SendQueueType CAN1_Txqueue;

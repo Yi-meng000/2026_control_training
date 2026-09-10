@@ -6,8 +6,8 @@
 #define PID_H
 
 #include <stdint.h>
-#include "MathFunc.h"
-#include "Vector.h"
+#include "math_func.h"
+#include "vector.h"
 
 #ifdef __cplusplus
 extern "C" {

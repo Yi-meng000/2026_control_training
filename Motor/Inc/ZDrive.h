@@ -8,9 +8,9 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include "main.h"
-#include "CanQueue.h"
+#include "can_queue.h"
 #include "motor_config.h"
-#include "MathFunc.h"
+#include "math_func.h"
 
 #ifdef __cplusplus
 extern "C"

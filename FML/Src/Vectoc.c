@@ -2,7 +2,7 @@
  * @file    vector.c
  * @brief   2D/3D vector helper functions.
  */
-#include "Vector.h"
+#include "vector.h"
 #include <math.h>
 
 float Modulo2d(vector2d v)

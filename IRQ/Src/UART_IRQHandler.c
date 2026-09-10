@@ -6,9 +6,9 @@
  * @FilePath: \f4_show\IRQ\Src\UART_IRQHandler.c
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
-#include "UART_IRQHandler.h"
-#include "EXTI_IRQHandler.h"
-#include "BlueTooth.h"
+#include "uart_irqhandler.h"
+#include "exti_irqhandler.h"
+#include "blue_tooth.h"
 
 uint8_t u1_rx_buffer[1] = {0};
 uint8_t u2_rx_buffer[5] = {0};

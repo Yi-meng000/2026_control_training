@@ -33,8 +33,8 @@ extern "C" {
 /* USER CODE BEGIN Includes */
 #include "stdint.h"
 #include "motor_config.h"
-#include "DJmotor.h"
-#include "ZDrive.h"
+#include "djmotor.h"
+#include "zdrive.h"
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/

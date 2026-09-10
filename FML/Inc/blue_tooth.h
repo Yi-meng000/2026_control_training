@@ -1,7 +1,7 @@
 #ifndef __BLUETOOTH_H__
 #define __BLUETOOTH_H__
 
-#include "MathFunc.h"
+#include "math_func.h"
 
 #include <main.h>
 #include "usart.h"

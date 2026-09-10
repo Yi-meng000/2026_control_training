@@ -1542,14 +1542,14 @@
           <GroupName>HDL</GroupName>
           <Files>
             <File>
-              <FileName>Beep.c</FileName>
+              <FileName>beep.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\HDL\Src\Beep.c</FilePath>
+              <FilePath>..\HDL\Src\beep.c</FilePath>
             </File>
             <File>
-              <FileName>Led.c</FileName>
+              <FileName>led.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\HDL\Src\Led.c</FilePath>
+              <FilePath>..\HDL\Src\led.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1557,24 +1557,24 @@
           <GroupName>IRQ</GroupName>
           <Files>
             <File>
-              <FileName>EXTI_IRQHandler.c</FileName>
+              <FileName>can_irqhandler.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\IRQ\Src\EXTI_IRQHandler.c</FilePath>
+              <FilePath>..\IRQ\Src\can_irqhandler.c</FilePath>
             </File>
             <File>
-              <FileName>TIM_IRQHandler.c</FileName>
+              <FileName>exti_irqhandler.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\IRQ\Src\TIM_IRQHandler.c</FilePath>
+              <FilePath>..\IRQ\Src\exti_irqhandler.c</FilePath>
             </File>
             <File>
-              <FileName>UART_IRQHandler.c</FileName>
+              <FileName>tim_irqhandler.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\IRQ\Src\UART_IRQHandler.c</FilePath>
+              <FilePath>..\IRQ\Src\tim_irqhandler.c</FilePath>
             </File>
             <File>
-              <FileName>CAN_IRQHandler.c</FileName>
+              <FileName>uart_irqhandler.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\IRQ\Src\CAN_IRQHandler.c</FilePath>
+              <FilePath>..\IRQ\Src\uart_irqhandler.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1582,14 +1582,19 @@
           <GroupName>FML</GroupName>
           <Files>
             <File>
-              <FileName>BlueTooth.c</FileName>
+              <FileName>blue_tooth.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\FML\Src\BlueTooth.c</FilePath>
+              <FilePath>..\FML\Src\blue_tooth.c</FilePath>
             </File>
             <File>
-              <FileName>MathFunc.c</FileName>
+              <FileName>can_queue.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\FML\Src\MathFunc.c</FilePath>
+              <FilePath>..\FML\Src\can_queue.c</FilePath>
+            </File>
+            <File>
+              <FileName>math_func.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\FML\Src\math_func.c</FilePath>
             </File>
             <File>
               <FileName>pid.c</FileName>
@@ -1597,19 +1602,14 @@
               <FilePath>..\FML\Src\pid.c</FilePath>
             </File>
             <File>
-              <FileName>Solenoid.c</FileName>
+              <FileName>solenoid.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\FML\Src\Solenoid.c</FilePath>
+              <FilePath>..\FML\Src\solenoid.c</FilePath>
             </File>
             <File>
-              <FileName>Vectoc.c</FileName>
+              <FileName>vectoc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\FML\Src\Vectoc.c</FilePath>
-            </File>
-            <File>
-              <FileName>CanQueue.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\FML\Src\CanQueue.c</FilePath>
+              <FilePath>..\FML\Src\vectoc.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1617,14 +1617,14 @@
           <GroupName>Motor</GroupName>
           <Files>
             <File>
-              <FileName>DJmotor.c</FileName>
+              <FileName>djmotor.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Motor\Src\DJmotor.c</FilePath>
+              <FilePath>..\Motor\Src\djmotor.c</FilePath>
             </File>
             <File>
-              <FileName>ZDrive.c</FileName>
+              <FileName>zdrive.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Motor\Src\ZDrive.c</FilePath>
+              <FilePath>..\Motor\Src\zdrive.c</FilePath>
             </File>
           </Files>
         </Group>

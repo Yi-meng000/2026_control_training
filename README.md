@@ -7,6 +7,10 @@
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
 # stm32f405rgt6 CubeMx HAL库版本模板
+# 仓库于9月10日停止维护，后续版本将于WHUROBOCON电控组仓库更新
+
+
+
 
 ## 食用须知
 (ctrl+鼠标左键点击链接即可跳转)

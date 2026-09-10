@@ -2,11 +2,11 @@
  * @Author: Frt001 2067314783@qq.com
  * @Date: 2026-08-24 16:51:06
  * @LastEditors: Frt001 2067314783@qq.com
- * @LastEditTime: 2026-08-24 16:51:57
+ * @LastEditTime: 2026-09-10 15:35:16
  * @FilePath: \f4_show\FML\Src\Solenoid.c
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
-#include "Solenoid.h"
+#include "solenoid.h"
 
 Solenoid_t solenoid_Channel1 = {0};
 Solenoid_t solenoid_Channel2 = {0};

@@ -9,7 +9,7 @@
 #ifndef CAN_IRQHANDLER_H
 #define CAN_IRQHANDLER_H
 
-#include "EXTI_IRQHandler.h"
+#include "exti_irqhandler.h"
 #include "main.h"
 #include "can.h"
 

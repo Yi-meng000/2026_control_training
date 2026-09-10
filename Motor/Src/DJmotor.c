@@ -6,7 +6,7 @@
  * and PID structure are kept, only the bus selection and a few safety details
  * were generalized for this template.
  */
-#include "DJmotor.h"
+#include "djmotor.h"
 
 #if USE_DJ
 
